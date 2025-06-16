@@ -1826,7 +1826,47 @@
             if (totalScore >= threshold.emergency) return "emergency";
             if (totalScore >= threshold.urgent) return "urgent";
             return "routine";
-        }
+}
+        // Function to convert severity score to percentage and get color
+function getSeverityPercentageAndColor(severityScore, urgency) {
+    // Convert score to percentage (assuming max score of 10)
+    const percentage = Math.round((severityScore / 10) * 100);
+    
+    let color, textColor;
+    
+    // Color coding based on urgency and management
+    if (urgency === 'in-practice') {
+        color = '#4ade80'; // Green for in-practice management
+        textColor = '#166534';
+    } else if (urgency === 'routine') {
+        color = '#fbbf24'; // Yellow for routine referral
+        textColor = '#92400e';
+    } else if (urgency === 'urgent' || urgency === 'semi-urgent') {
+        color = '#fb923c'; // Orange for urgent
+        textColor = '#7c2d12';
+    } else if (urgency === 'emergency') {
+        color = '#ef4444'; // Red for emergency
+        textColor = '#ffffff';
+    }
+    
+    return { percentage, color, textColor };
+}
+
+// Update the display function
+function displaySeverityScore(severityScore, urgency) {
+    const { percentage, color, textColor } = getSeverityPercentageAndColor(severityScore, urgency);
+    
+    // Update your severity score display element
+    const severityElement = document.getElementById('severity-score');
+    if (severityElement) {
+        severityElement.innerHTML = `Clinical Severity Score: ${percentage}%`;
+        severityElement.style.backgroundColor = color;
+        severityElement.style.color = textColor;
+        severityElement.style.padding = '10px';
+        severityElement.style.borderRadius = '8px';
+        severityElement.style.fontWeight = 'bold';
+    }
+}
 
         // Comprehensive clinical schema with detailed pathways
         const clinicalSchema = {
@@ -3941,10 +3981,15 @@
             document.getElementById('recommendation-subtitle').textContent = recommendation.condition;
             document.getElementById('reasoning-text').textContent = recommendation.reasoning;
             
-            // Set severity score
-            const severityScore = recommendation.severityScore || 0;
-            document.getElementById('severity-score').textContent = `Clinical Severity Score: ${severityScore}`;
-            document.getElementById('severity-fill').style.width = `${Math.min(severityScore * 5, 100)}%`;
+            // Set severity score with color coding
+const severityScore = recommendation.severityScore || 0;
+displaySeverityScore(severityScore, recommendation.urgency);
+
+// Update the severity bar with appropriate color
+const { percentage, color } = getSeverityPercentageAndColor(severityScore, recommendation.urgency);
+const severityFill = document.getElementById('severity-fill');
+severityFill.style.width = `${percentage}%`;
+severityFill.style.background = color;
             
             // Set next steps
             document.getElementById('next-steps-text').textContent = 
