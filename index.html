@@ -4438,3 +4438,31 @@ window.onload = renderConditionGrid;
 </script>
 </body>
 </html>
+window.renderConditionGrid = function() {
+    var grid = document.getElementById('condition-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    if (!window.conditions || !conditions.length) {
+        grid.innerHTML = '<div style="color:red;">No clinical conditions found.</div>';
+        return;
+    }
+    conditions.forEach(function(cond) {
+        var card = document.createElement('div');
+        card.className = 'condition-card';
+        card.onclick = function() {
+            alert("You clicked: " + cond.title);
+        };
+        card.innerHTML = `
+            <div class="condition-header">
+                <h3 class="condition-title">${cond.title}</h3>
+            </div>
+            <div class="condition-description">${cond.description}</div>
+            <div class="condition-pathways">Pathways: ${cond.pathways}</div>
+        `;
+        grid.appendChild(card);
+    });
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+    window.renderConditionGrid();
+});
