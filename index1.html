@@ -1829,24 +1829,38 @@
 }
         // Function to convert severity score to percentage and get color
 function getSeverityPercentageAndColor(severityScore, urgency) {
-    // Convert score to percentage (assuming max score of 10)
-    const percentage = Math.round((severityScore / 10) * 100);
+    // Define max scores for each condition
+    const maxScores = {
+        "Red Eye": 20,
+        "Flashes & Floaters": 27,
+        "Sudden Vision Loss": 24,
+        "Raised IOP": 21,
+        "Eyelid Problems": 20,
+        "Watery Eyes": 16,
+        "Pediatric Eye Problems": 21,
+        "Diplopia": 21,
+        "Headaches with Visual Symptoms": 23,
+        "Corneal Problems": 24
+    };
     
-    let color, textColor;
+    // Get max score for current condition, default to 20 if not found
+    const maxScore = maxScores[selectedCondition] || 20;
     
-    // Color coding based on urgency and management
-    if (urgency === 'in-practice') {
-        color = '#4ade80'; // Green for in-practice management
-        textColor = '#166534';
-    } else if (urgency === 'routine') {
-        color = '#fbbf24'; // Yellow for routine referral
-        textColor = '#92400e';
-    } else if (urgency === 'urgent' || urgency === 'semi-urgent') {
-        color = '#fb923c'; // Orange for urgent
-        textColor = '#7c2d12';
-    } else if (urgency === 'emergency') {
-        color = '#ef4444'; // Red for emergency
-        textColor = '#ffffff';
+    // Calculate percentage (0-100)
+    const percentage = Math.min(Math.round((severityScore / maxScore) * 100), 100);
+    
+    // For gradient positioning
+    let color = '';
+    let textColor = '#ffffff';
+    
+    // We'll use the percentage for gradient position, not solid colors
+    // Text color based on percentage
+    if (percentage < 30) {
+        textColor = '#166534'; // Dark green
+    } else if (percentage < 70) {
+        textColor = '#92400e'; // Dark yellow/brown
+    } else {
+        textColor = '#ffffff'; // White for dark backgrounds
     }
     
     return { percentage, color, textColor };
